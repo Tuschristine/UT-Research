@@ -58,6 +58,38 @@ int main(int argc, char **argv)
         yaw = 0.0;
     }
     
+    while(ros::ok)
+    {
+		ROS_INFO("%d", x_value);
+	}
+   
+    goal.target_pose.pose.orientation = tf::createQuaternionMsgFromYaw(yaw);
+
+    //send the goal
+    ac.sendGoal(goal);
+   
+    //block until the action is completed
+    ac.waitForResult();
+
+  }
+ 
+  ros::Subscriber sub = n.subscribe("x", 1000, turnToPink);
+ 
+  return 0;
+
+}
+
+   
+    else if(x_value > 330)
+    {
+		yaw = 0.1;
+    }
+   
+    else
+    {
+        yaw = 0.0;
+    }
+    
     ROS_INFO("%d", x_value);
    
     goal.target_pose.pose.orientation = tf::createQuaternionMsgFromYaw(yaw);
