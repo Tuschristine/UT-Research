@@ -18,21 +18,27 @@ int x_value;
 void turnToPink(const std_msgs::Int16::ConstPtr& msg)
 {
     x_value = msg->data;
+    ROS_INFO_STREAM(x_value);
 }
 
 int main(int argc, char **argv)
 {
+  ros::spinOnce();
+  
   ros::init(argc, argv, "move_base_client");
   ros::NodeHandle n;
+  ros::Subscriber sub = n.subscribe("x", 100, turnToPink);
+  actionlib::SimpleActionClient<move_base_msgs::MoveBaseAction> ac("move_base",true);
+  
+  while (ros::ok())
+  {
     
-     while (ros::ok())
-    {
     move_base_msgs::MoveBaseGoal goal;
    
     double x = 0;
     double yaw = 0;
  
-    actionlib::SimpleActionClient<move_base_msgs::MoveBaseAction> ac("move_base",true);
+    
    
     //set the header
     goal.target_pose.header.stamp = ros::Time::now();
@@ -58,52 +64,21 @@ int main(int argc, char **argv)
         yaw = 0.0;
     }
     
-    while(ros::ok)
-    {
-		ROS_INFO("%d", x_value);
-	}
-   
-    goal.target_pose.pose.orientation = tf::createQuaternionMsgFromYaw(yaw);
-
-    //send the goal
-    ac.sendGoal(goal);
-   
-    //block until the action is completed
-    ac.waitForResult();
-
-  }
- 
-  ros::Subscriber sub = n.subscribe("x", 1000, turnToPink);
- 
-  return 0;
-
-}
-
-   
-    else if(x_value > 330)
-    {
-		yaw = 0.1;
-    }
-   
-    else
-    {
-        yaw = 0.0;
-    }
     
-    ROS_INFO("%d", x_value);
+		ROS_INFO("%d", x_value);
    
     goal.target_pose.pose.orientation = tf::createQuaternionMsgFromYaw(yaw);
 
     //send the goal
     ac.sendGoal(goal);
-   
     //block until the action is completed
-    ac.waitForResult();
+    //ac.waitForResult();
 
   }
  
-  ros::Subscriber sub = n.subscribe("x", 1000, turnToPink);
+  
  
   return 0;
 
 }
+
